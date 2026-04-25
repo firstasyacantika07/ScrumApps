@@ -2,26 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Briefcase, Users, Info, 
-  Settings, LogOut, Layers3, User, Bell
+  LogOut, Layers3, User, Bell, Settings
 } from 'lucide-react';
-import api from '../api/axios'; // Pastikan path axios sudah benar
-import './css/Projectlist.css';
+import api from '../api/axios'; 
+import './css/ProjectList.css'; 
 import './css/KelolaProfil.css';
 
 const KelolaProfil = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     gender: "",
     nik: "",
     alamat: "",
     phone: "",
-    email: ""
+    email: "",
+    password: "" // Optional field
   });
 
-  // 1. Ambil data dari sesi saat halaman dimuat
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (!loggedInUser) {
@@ -32,14 +33,15 @@ const KelolaProfil = () => {
     const user = JSON.parse(loggedInUser);
     setUserData(user);
     
-    // Isi form dengan data dari sesi/database
+    // Inisialisasi form dengan data dari LocalStorage/DB
     setFormData({
-      username: user.name || "",
+      name: user.name || "",
       gender: user.gender || "laki",
       nik: user.nik || "",
       alamat: user.alamat || "",
       phone: user.phone || "",
-      email: user.email || ""
+      email: user.email || "",
+      password: "" 
     });
   }, [navigate]);
 
@@ -52,13 +54,14 @@ const KelolaProfil = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 2. Kirim update ke Backend (Pastikan endpoint /users/update sesuai)
       const response = await api.put(`/users/update/${userData.id}`, formData);
       
       if (response.status === 200) {
-        // Update localStorage agar nama di navbar juga berubah
+        // Sinkronisasi data baru ke LocalStorage agar navbar terupdate otomatis
         const updatedUser = { ...userData, ...formData };
+        delete updatedUser.password; // Jangan simpan password di localstorage
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        
         alert("Profil berhasil diperbarui!");
         navigate('/dashboard');
       }
@@ -79,131 +82,117 @@ const KelolaProfil = () => {
 
   return (
     <div className="scrumapps-wrapper">
-      {/* SIDEBAR - Konsisten dengan Dashboard */}
       <aside className="scrum-sidebar">
         <div className="sidebar-logo">
-          <div className="logo-box"><Layers3 color="white" size={20} /></div>
-          <span className="logo-text">ScrumApps</span>
+          <Layers3 color="#ee1e2d" size={28} />
+          <span>ScrumApps</span>
         </div>
         <nav className="sidebar-nav">
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <LayoutDashboard size={20} /> <span>Dashboard</span>
-          </NavLink>
-          <NavLink to="/projects" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Briefcase size={20} /> <span>Proyek</span>
-          </NavLink>
-          <NavLink to="/users" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Users size={20} /> <span>Pengguna</span>
-          </NavLink>
-          <NavLink to="/info" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Info size={20} /> <span>Sistem</span>
-          </NavLink>
+          <NavLink to="/dashboard" className="nav-item"><LayoutDashboard size={20} /> <span>Dashboard</span></NavLink>
+          <NavLink to="/projects" className="nav-item"><Briefcase size={20} /> <span>Proyek</span></NavLink>
+          <NavLink to="/users" className="nav-item"><Users size={20} /> <span>Pengguna</span></NavLink>
+          <NavLink to="/info" className="nav-item"><Info size={20} /> <span>Informasi</span></NavLink>
         </nav>
-        <div className="sidebar-bottom-section">
-           <div className="sidebar-footer">
-            <p>© 2026 <strong>ScrumApps</strong>.</p>
-          </div>
-        </div>
       </aside>
 
       <main className="scrum-main">
         <header className="scrum-header">
           <div className="header-left">
             <div className="breadcrumb">
-              <span className="bc-icon-red"><User size={16} /></span>
-              <span className="bc-text bc-active">Pengaturan</span>
-              <span className="bc-sep">›</span>
-              <span className="bc-text">Profil Saya</span>
+              <span className="bc-icon" style={{backgroundColor: '#ee1e2d', color: 'white'}}><User size={16} /></span>
+              <span className="bc-text bc-active">Kelola Profil</span>
             </div>
           </div>
           <div className="header-right">
-             <div className="admin-profile-section">
+             <div className="flex items-center gap-3 mr-4">
                 <div className="text-right">
-                  <p className="admin-name">{userData.username}</p>
-                  <p className="admin-email">{userData.email}</p>
+                  <p className="text-xs font-bold text-gray-800">{userData.name}</p>
+                  <p className="text-[10px] text-gray-400">{userData.email}</p>
                 </div>
-                <div className="admin-avatar">
-                   <img src={`https://ui-avatars.com/api/?name=${userData.username}&background=ee1e2d&color=fff`} alt="avatar" />
-                </div>
+                <img 
+                  src={`https://ui-avatars.com/api/?name=${userData.name}&background=ee1e2d&color=fff`} 
+                  className="w-10 h-10 rounded-full" 
+                  alt="avatar" 
+                />
              </div>
              <LogOut size={20} color="#a0aec0" className="cursor-pointer" onClick={handleLogout} />
           </div>
         </header>
 
         <div className="scrum-content">
-          <div className="content-header">
-            <h2>Kelola Profil</h2>
-            <p>Perbarui informasi pribadi Anda untuk koordinasi tim yang lebih baik.</p>
-          </div>
-
-          <div className="profile-card">
-            <form className="profile-form" onSubmit={handleSubmit}>
-              
-              <div className="photo-upload-section">
-                <label className="input-label">Foto Profil</label>
-                <div className="photo-container">
-                  <img 
-                    src={`https://ui-avatars.com/api/?name=${formData.username}&background=f1f5f9&color=cbd5e1&size=128`} 
-                    className="avatar-preview" 
-                    alt="Preview"
-                  />
-                  <div className="photo-actions">
-                    <button type="button" className="btn-change">Ubah Foto</button>
-                    <button type="button" className="btn-delete-photo">Hapus</button>
-                  </div>
+          <div className="profile-card bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold mb-6">Informasi Akun</h3>
+            
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="col-span-2 flex items-center gap-6 mb-4">
+                <img 
+                  src={`https://ui-avatars.com/api/?name=${formData.name}&background=f8fafc&color=cbd5e1&size=128`} 
+                  className="w-24 h-24 rounded-2xl border" 
+                  alt="Preview"
+                />
+                <div>
+                  <button type="button" className="text-sm font-semibold text-red-500">Ubah Foto</button>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG maksimal 2MB.</p>
                 </div>
               </div>
 
-              <div className="form-grid">
-                <div className="form-group full-width">
-                  <label>Nama Lengkap</label>
-                  <input 
-                    type="text" 
-                    name="username" 
-                    value={formData.username} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Jenis Kelamin</label>
-                  <div className="radio-group">
-                    <label className="radio-label">
-                      <input type="radio" name="gender" value="laki" checked={formData.gender === 'laki'} onChange={handleChange} />
-                      <span>Laki-laki</span>
-                    </label>
-                    <label className="radio-label">
-                      <input type="radio" name="gender" value="perempuan" checked={formData.gender === 'perempuan'} onChange={handleChange} />
-                      <span>Perempuan</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>NIK</label>
-                  <input type="text" name="nik" value={formData.nik} onChange={handleChange} placeholder="351xxxxxxxxxxxxx" />
-                </div>
-
-                <div className="form-group full-width">
-                  <label>Alamat Lengkap</label>
-                  <textarea name="alamat" rows="3" value={formData.alamat} onChange={handleChange}></textarea>
-                </div>
-
-                <div className="form-group">
-                  <label>No Telepon</label>
-                  <input type="tel" name="phone" value={formData.phone} onChange={handleChange} />
-                </div>
-
-                <div className="form-group">
-                  <label>Alamat Email</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-                </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold">Nama Lengkap</label>
+                <input 
+                  type="text" name="name" 
+                  value={formData.name} onChange={handleChange} 
+                  className="p-2 bg-gray-50 border rounded-lg text-sm" required 
+                />
               </div>
 
-              <div className="form-footer">
-                <button type="button" className="btn-cancel" onClick={() => navigate('/dashboard')}>Batal</button>
-                <button type="submit" className="btn-save" disabled={loading}>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold">Email</label>
+                <input 
+                  type="email" name="email" 
+                  value={formData.email} onChange={handleChange} 
+                  className="p-2 bg-gray-50 border rounded-lg text-sm" required 
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold">NIK</label>
+                <input 
+                  type="text" name="nik" 
+                  value={formData.nik} onChange={handleChange} 
+                  className="p-2 bg-gray-50 border rounded-lg text-sm" 
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold">No. Telepon</label>
+                <input 
+                  type="tel" name="phone" 
+                  value={formData.phone} onChange={handleChange} 
+                  className="p-2 bg-gray-50 border rounded-lg text-sm" 
+                />
+              </div>
+
+              <div className="col-span-2 flex flex-col gap-2">
+                <label className="text-sm font-semibold">Alamat</label>
+                <textarea 
+                  name="alamat" value={formData.alamat} onChange={handleChange} 
+                  className="p-2 bg-gray-50 border rounded-lg text-sm" rows="3"
+                ></textarea>
+              </div>
+
+              <div className="col-span-2 border-t pt-6 mt-4 flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => navigate('/dashboard')}
+                  className="px-6 py-2 rounded-lg bg-gray-100 text-sm font-bold"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="px-6 py-2 rounded-lg bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition-colors"
+                >
                   {loading ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>
               </div>

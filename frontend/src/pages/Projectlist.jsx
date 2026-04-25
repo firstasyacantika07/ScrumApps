@@ -1,254 +1,228 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom'; 
 import { 
-  LayoutDashboard, 
-  Briefcase, 
-  Users, 
-  Info, 
-  Settings, 
-  LogOut, 
-  Layers3, 
-  FolderPlus, 
-  Building2, 
-  Store,
-  Bell,
-  User,
-  X,
-  Monitor
+  LayoutDashboard, Briefcase, Users, Info, LogOut, 
+  Layers3, FolderPlus, Building2, Lock, Rocket, RefreshCw, 
+  Trash2, Pencil, X, Plus, AlertCircle
 } from 'lucide-react';
-import './css/ProjectList.css';
+import api from '../api/axios'; 
+import './css/Projectlist.css';
 
 const ProjectList = () => {
   const navigate = useNavigate();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
-  // --- STATE TAMBAHAN UNTUK MODAL TAMBAH PROYEK ---
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({
-    name: '',
-    client: '',
-    type: 'Eksternal'
+  // --- States ---
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState(null); // Null untuk Create, Object untuk Update
+  
+  // Form State
+  const [formData, setFormData] = useState({
+    project_name: '',
+    client_name: '',
+    project_status: 'In Progress',
+    category: 'Web App'
   });
 
-  // Data dummy untuk daftar proyek
-  const projects = [
-    { 
-      id: 1, 
-      name: "TOKO BANGUNAN", 
-      client: "Clariva PO", 
-      icon: <Building2 size={32} color="#ee1e2d" />, 
-      status: "Done" 
-    },
-    { 
-      id: 2, 
-      name: "TOKO SEPEDA", 
-      client: "Clariva PO", 
-      icon: <Store size={32} color="#ee1e2d" />, 
-      status: "In Progress" 
-    },
-  ];
+  const PLAN_LIMITS = { FREE: 1, PRO: 15, ENTERPRISE: Infinity };
 
-  const handleLogout = () => {
-    navigate('/login');
+  // --- Fetch Data (Read) ---
+  const fetchProjects = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/projects');
+      setProjects(response.data);
+    } catch (error) {
+      console.error("Gagal mengambil proyek:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem('user');
+    if (!loggedInUser) return navigate('/login');
+    setUserData(JSON.parse(loggedInUser));
+    fetchProjects();
+  }, [navigate, fetchProjects]);
+
+  // --- Logic SaaS ---
+  const userPlan = userData?.plan || "FREE"; 
+  const isLimitReached = projects.length >= PLAN_LIMITS[userPlan];
+
+  // --- Actions ---
+  const openModal = (project = null) => {
+    if (project) {
+      setEditingProject(project);
+      setFormData({
+        project_name: project.project_name,
+        client_name: project.client_name || '',
+        project_status: project.project_status,
+        category: project.category || 'Web App'
+      });
+    } else {
+      setEditingProject(null);
+      setFormData({ project_name: '', client_name: '', project_status: 'In Progress', category: 'Web App' });
+    }
+    setIsModalOpen(true);
   };
 
-  // Handler Simpan Proyek (Logika Dasar)
-  const handleSaveProject = () => {
-    console.log("Menyimpan Proyek:", newProject);
-    setIsAddModalOpen(false);
-    // Reset form
-    setNewProject({ name: '', client: '', type: 'Eksternal' });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingProject) {
+        // UPDATE
+        await api.put(`/projects/${editingProject.id}`, formData);
+      } else {
+        // CREATE
+        await api.post('/projects', formData);
+      }
+      setIsModalOpen(false);
+      fetchProjects();
+    } catch (error) {
+      alert("Operasi gagal: " + error.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Hapus proyek ini secara permanen?")) {
+      try {
+        await api.delete(`/projects/${id}`);
+        fetchProjects();
+      } catch (error) {
+        alert("Gagal menghapus");
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   return (
     <div className="scrumapps-wrapper">
-      {/* 1. SIDEBAR */}
+      {/* Sidebar */}
       <aside className="scrum-sidebar">
         <div className="sidebar-logo">
-          <Layers3 color="#ee1e2d" size={28} />
-          <span>ScrumApps</span>
+          <div className="logo-box"><Layers3 color="white" size={20} /></div>
+          <span className="logo-text">ScrumApps</span>
         </div>
-        
         <nav className="sidebar-nav">
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <LayoutDashboard size={20} /> <span>Dashboard</span>
-          </NavLink>
-          
-          <NavLink to="/projects" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Briefcase size={20} /> <span>Proyek</span>
-          </NavLink>
-          
-          <NavLink to="/users" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Users size={20} /> <span>Pengguna</span>
-          </NavLink>
-          
-          <NavLink to="/info" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Info size={20} /> <span>Informasi Sistem</span>
-          </NavLink>
+          <NavLink to="/dashboard" className="nav-item"><LayoutDashboard size={20} /> <span>Dashboard</span></NavLink>
+          <NavLink to="/projects" className="nav-item active"><Briefcase size={20} /> <span>Proyek</span></NavLink>
+          <NavLink to="/users" className="nav-item"><Users size={20} /> <span>Pengguna</span></NavLink>
         </nav>
 
-        <div className="sidebar-footer">
-          <p>Copyright 2024 ScrumApps.</p>
-          <p>Rights Reserved. Version 0.5.0-alpha</p>
+        <div className="sidebar-plan-info" style={planInfoSidebarStyle}>
+           <div className="flex items-center gap-2 mb-1">
+             <Rocket size={14} color="#ee1e2d"/>
+             <span style={{fontSize: '11px', fontWeight: 'bold'}}>PAKET {userPlan}</span>
+           </div>
+           <p style={{fontSize: '10px', color: '#718096'}}>{projects.length} / {PLAN_LIMITS[userPlan] === Infinity ? '∞' : PLAN_LIMITS[userPlan]} Proyek</p>
         </div>
       </aside>
 
-      {/* 2. AREA UTAMA */}
+      {/* Main Content */}
       <main className="scrum-main">
         <header className="scrum-header">
-          <div className="header-left">
-            <div className="breadcrumb">
-              <span className="bc-icon" style={{ backgroundColor: '#ee1e2d', color: 'white' }}>
-                <Briefcase size={16} />
-              </span>
-              <span className="bc-text bc-active">Daftar Proyek</span>
-            </div>
-          </div>
-          
-          <div className="header-right">
-            <div className="flex items-center gap-3 mr-4 border-r pr-4 border-gray-100">
-              <div className="text-right">
-                <p className="text-xs font-bold text-gray-800">Halo, Admin!</p>
-                <p className="text-[10px] text-gray-400">admin@scrumapps.com</p>
-              </div>
-              <div className="w-10 h-10 bg-red-100 rounded-full border-2 border-white shadow-sm overflow-hidden">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=ee1e2d&color=fff" alt="avatar" />
-              </div>
-            </div>
-
-            <Bell size={20} color="#a0aec0" className="cursor-pointer" />
-            
-            <div style={{ position: 'relative' }}>
-              <Settings 
-                size={20} 
-                color="#a0aec0" 
-                className="cursor-pointer" 
-                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-              />
-              
-              {isSettingsOpen && (
-                <div style={dropdownStyle}>
-                  <div 
-                    onClick={() => {
-                      navigate('/kelolaprofil');
-                      setIsSettingsOpen(false);
-                    }}
-                    style={dropdownItemStyle}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f8fafc'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                  >
-                    <User size={16} /> Kelola Profil
-                  </div>
-
-                  <div style={{ height: '1px', backgroundColor: '#edf2f7', margin: '4px 0' }}></div>
-
-                  <div 
-                    onClick={handleLogout}
-                    style={{ ...dropdownItemStyle, color: '#ee1e2d' }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#fff5f5'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                  >
-                    <LogOut size={16} color="#ee1e2d" /> Keluar Sesi
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+           <div className="breadcrumb">
+             <span className="bc-icon-red"><Briefcase size={16} /></span>
+             <span className="bc-text bc-active">Daftar Proyek</span>
+           </div>
+           <div className="header-right">
+              <RefreshCw size={18} className={loading ? 'animate-spin' : 'cursor-pointer'} onClick={fetchProjects} />
+              <LogOut size={20} className="cursor-pointer" onClick={handleLogout} />
+           </div>
         </header>
 
         <div className="scrum-content">
-          <div className="content-header" style={{ marginBottom: '25px' }}>
-            <h2>Daftar Proyek</h2>
-            <p>Halaman ini berisi daftar proyek yang ada sesuai dengan hak akses dan kontribusi pengguna.</p>
+          <div className="content-header" style={{display:'flex', justifyContent:'space-between', marginBottom:'30px'}}>
+            <h2>Proyek Anda</h2>
+            {isLimitReached && <Link to="/pricing" style={upgradeBtnStyle}><Lock size={14}/> Upgrade ke PRO</Link>}
           </div>
 
           <div className="project-grid">
-            {/* CARD TAMBAH PROYEK (Trigger Modal) */}
-            <div className="project-card add-new-card" onClick={() => setIsAddModalOpen(true)} style={{ cursor: 'pointer' }}>
-              <div className="card-body">
-                <p className="add-label">Buat Proyek Baru</p>
-                <button className="btn-add">
-                  <FolderPlus size={18} />
-                  <span>Tambah</span>
-                </button>
+            {/* Create Card */}
+            {!isLimitReached ? (
+              <div className="project-card add-new-card" onClick={() => openModal()}>
+                <div className="card-body-center">
+                  <div className="add-icon-circle"><Plus size={24} color="#ee1e2d" /></div>
+                  <p style={{color:'#ee1e2d', fontWeight:'600', marginTop:'10px'}}>Proyek Baru</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="project-card add-new-card disabled" style={{opacity:0.6, cursor:'not-allowed', border:'2px dashed #cbd5e0'}}>
+                <div className="card-body-center">
+                  <Lock size={24} color="#94a3b8" />
+                  <p style={{color:'#94a3b8', marginTop:'10px'}}>Batas Tercapai</p>
+                </div>
+              </div>
+            )}
 
-            {/* Iterasi Data Proyek dengan LINK */}
+            {/* Read & Delete/Update List */}
             {projects.map((project) => (
-              <Link 
-                to={`/projects/${project.id}`} 
-                key={project.id} 
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                <div className="project-card data-card" style={{ cursor: 'pointer' }}>
-                  <div className={`card-status-strip ${project.status === 'Done' ? 'bg-done' : 'bg-progress'}`}></div>
-                  <div className="card-body">
-                    <div className="client-icon-wrapper">
-                      {project.icon}
-                    </div>
-                    <h4 className="project-title">{project.name}</h4>
-                    <p className="project-client">{project.client}</p>
-                    <div className="card-footer-info">
-                      <span className={`status-badge ${project.status === 'Done' ? 'done' : 'progress'}`}>
-                        {project.status}
-                      </span>
+              <div key={project.id} className="project-card-container" style={{position:'relative'}}>
+                <div className="action-buttons-overlay">
+                  <button onClick={() => openModal(project)} className="btn-edit"><Pencil size={14}/></button>
+                  <button onClick={() => handleDelete(project.id)} className="btn-delete"><Trash2 size={14}/></button>
+                </div>
+                
+                <Link to={`/projects/${project.id}`} className="project-link">
+                  <div className="project-card data-card">
+                    <div className={`status-strip ${project.project_status === 'Done' ? 'bg-done' : 'bg-progress'}`}></div>
+                    <div className="card-body">
+                      <Building2 size={32} color="#ee1e2d" />
+                      <h4 className="project-title">{project.project_name}</h4>
+                      <p className="project-client">{project.client_name || 'No Client'}</p>
+                      <span className="badge-status">{project.project_status}</span>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
           </div>
         </div>
       </main>
 
-      {/* --- MODAL TAMBAH PROYEK --- */}
-      {isAddModalOpen && (
-        <div style={modalOverlayStyle}>
-          <div style={modalContentStyle}>
-            <div style={modalTitleFlex}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>Tambah Proyek Baru</h3>
-              <button onClick={() => setIsAddModalOpen(false)} style={btnRawStyle}><X size={20} color="#a0aec0" /></button>
+      {/* --- MODAL CRUD --- */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>{editingProject ? 'Edit Proyek' : 'Tambah Proyek Baru'}</h3>
+              <X className="cursor-pointer" onClick={() => setIsModalOpen(false)} />
             </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <div>
-                <label style={labelStyle}>Nama Proyek</label>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Nama Proyek</label>
                 <input 
-                  type="text" 
-                  placeholder="Masukkan Nama Proyek" 
-                  style={inputStyle}
-                  value={newProject.name}
-                  onChange={(e) => setNewProject({...newProject, name: e.target.value})}
+                  type="text" value={formData.project_name} required
+                  onChange={(e) => setFormData({...formData, project_name: e.target.value})} 
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Client / PO</label>
+              <div className="form-group">
+                <label>Klien</label>
                 <input 
-                  type="text" 
-                  placeholder="Nama Client atau Product Owner" 
-                  style={inputStyle}
-                  value={newProject.client}
-                  onChange={(e) => setNewProject({...newProject, client: e.target.value})}
+                  type="text" value={formData.client_name}
+                  onChange={(e) => setFormData({...formData, client_name: e.target.value})} 
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Tipe Proyek</label>
-                <select 
-                  style={inputStyle}
-                  value={newProject.type}
-                  onChange={(e) => setNewProject({...newProject, type: e.target.value})}
-                >
-                  <option value="Eksternal">Eksternal</option>
-                  <option value="Internal">Internal</option>
+              <div className="form-group">
+                <label>Status</label>
+                <select value={formData.project_status} onChange={(e) => setFormData({...formData, project_status: e.target.value})}>
+                  <option value="Hold">Hold</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Done">Done</option>
                 </select>
               </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '30px' }}>
-              <button onClick={() => setIsAddModalOpen(false)} style={btnCancelStyle}>Batal</button>
-              <button onClick={handleSaveProject} style={btnSaveStyle}>Simpan Proyek</button>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Batal</button>
+                <button type="submit" className="btn-save">{editingProject ? 'Simpan Perubahan' : 'Buat Proyek'}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -256,99 +230,8 @@ const ProjectList = () => {
   );
 };
 
-// --- STYLES ---
-
-const dropdownStyle = {
-  position: 'absolute',
-  top: '35px',
-  right: '0',
-  backgroundColor: 'white',
-  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-  borderRadius: '10px',
-  padding: '8px 0',
-  zIndex: 1000,
-  width: '180px',
-  border: '1px solid #edf2f7'
-};
-
-const dropdownItemStyle = {
-  padding: '10px 20px',
-  fontSize: '13px',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  color: '#4a5568',
-  transition: 'background 0.2s'
-};
-
-const modalOverlayStyle = {
-  position: 'fixed',
-  top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 2000
-};
-
-const modalContentStyle = {
-  backgroundColor: 'white',
-  padding: '30px',
-  borderRadius: '12px',
-  width: '500px',
-  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
-};
-
-const modalTitleFlex = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '20px'
-};
-
-const labelStyle = {
-  display: 'block',
-  marginBottom: '8px',
-  fontSize: '13px',
-  fontWeight: '600',
-  color: '#4a5568'
-};
-
-const inputStyle = {
-  width: '100%',
-  padding: '10px',
-  borderRadius: '6px',
-  border: '1px solid #edf2f7',
-  backgroundColor: '#f8fafc',
-  boxSizing: 'border-box',
-  fontSize: '13px'
-};
-
-const btnSaveStyle = {
-  backgroundColor: '#ee1e2d',
-  color: 'white',
-  border: 'none',
-  padding: '10px 25px',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  fontWeight: '600'
-};
-
-const btnCancelStyle = {
-  backgroundColor: '#f7fafc',
-  color: '#a0aec0',
-  border: 'none',
-  padding: '10px 25px',
-  borderRadius: '8px',
-  cursor: 'pointer'
-};
-
-const btnRawStyle = {
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  padding: '5px'
-};
+// --- Styles Tambahan ---
+const planInfoSidebarStyle = { padding: '15px', margin: '15px', backgroundColor: '#fff5f5', borderRadius: '12px' };
+const upgradeBtnStyle = { backgroundColor: '#ee1e2d', color: 'white', padding: '8px 15px', borderRadius: '8px', textDecoration: 'none', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px' };
 
 export default ProjectList;

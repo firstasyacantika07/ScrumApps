@@ -7,6 +7,8 @@ import ProjectDetail from "./pages/ProjectDetail";
 import Users from "./pages/Users";
 import Info from "./pages/Info";
 import KelolaProfil from "./pages/KelolaProfil";
+import Pricing from "./pages/Pricing";
+import Checkout from "./pages/Checkout";
 import './index.css';
 
 
@@ -19,14 +21,12 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/projects" element={<ProjectList />} />
-        
         <Route path="/projects/:id/*" element={<ProjectDetail />} />
-        
-        
         <Route path="/users" element={<Users/>} />
         <Route path="/info" element={<Info/>} />
         <Route path="/kelolaprofil" element={<KelolaProfil/>} />
-        
+        <Route path="/pricing" element={<Pricing/>} />
+        <Route path="/checkout" element={<Checkout/>} />
         <Route path="*" element={<div className="p-10 text-center">404 - Halaman Tidak Ditemukan</div>} />
       </Routes>
     </Router>
