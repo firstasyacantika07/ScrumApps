@@ -1,0 +1,137 @@
+.profile-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.photo-upload-section {
+    margin-bottom: 30px;
+}
+
+.input-label {
+    display: block;
+    font-size: 12px;
+    color: #a0aec0;
+    margin-bottom: 10px;
+}
+
+.photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.avatar-box {
+    width: 80px;
+    height: 80px;
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-change {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-delete-photo {
+    background: transparent;
+    border: 1px solid #fee2e2;
+    color: #ee1e2d;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #edf2f7;
+    border-radius: 10px;
+    background: #f8fafc;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 25px;
+    padding-top: 10px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.radio-group input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #ee1e2d;
+}
+
+.form-footer {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.btn-cancel {
+    background: white;
+    border: 1px solid #edf2f7;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-save {
+    background: #ee1e2d;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-save:hover {
+    background: #d61a28;
+}

@@ -1,0 +1,243 @@
+/* src/pages/CSS/Login.css */
+
+/* Import font Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Dasar */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+/* Container Utama Split Screen */
+.login-split-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    /* Visual di kanan, Form di kiri */
+    flex-direction: row-reverse;
+}
+
+/* ========================================= */
+/* SISI VISUAL / ILUSTRASI (Sekarang Kanan)  */
+/* ========================================= */
+.login-visual-section {
+    flex: 1.2;
+    background-color: #f1f5f9; /* Abu-abu muda (Slate 100) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 40px;
+}
+
+.visual-content {
+    text-align: center;
+    z-index: 2;
+    max-width: 500px;
+}
+
+.visual-image {
+    width: 80%;
+    height: auto;
+    margin-bottom: 30px;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.05));
+}
+
+.visual-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+}
+
+.visual-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* Dekorasi Blur Background */
+.blur-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 1;
+}
+
+.top-circle {
+    width: 300px;
+    height: 300px;
+    background: rgba(59, 130, 246, 0.08); /* Biru tipis */
+    top: -50px;
+    right: -50px;
+}
+
+.bottom-circle {
+    width: 250px;
+    height: 250px;
+    background: rgba(238, 30, 45, 0.05); /* Merah tipis */
+    bottom: -50px;
+    left: -50px;
+}
+
+/* ========================================= */
+/* SISI FORMULIR (Sekarang Kiri)             */
+/* ========================================= */
+.login-form-section {
+    flex: 1;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header h1 {
+    font-size: 34px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+    letter-spacing: -1px;
+}
+
+.form-header p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* Form Styling */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.custom-input {
+    width: 100%;
+    padding: 16px 20px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.custom-input:focus {
+    border-color: #ee1e2d; /* Merah ScrumApps */
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(238, 30, 45, 0.08);
+}
+
+/* Toggle Password */
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle:hover {
+    color: #64748b;
+}
+
+/* Actions */
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-login-main {
+    width: 100%;
+    padding: 16px;
+    background-color: #ee1e2d;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(238, 30, 45, 0.2);
+}
+
+.btn-login-main:hover {
+    background-color: #d41624;
+    transform: translateY(-2px);
+}
+
+.btn-forgot-password {
+    text-align: center;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.btn-forgot-password:hover {
+    color: #ee1e2d;
+}
+
+/* Footer */
+.form-footer {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.form-footer p {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.8;
+}
+
+/* ========================================= */
+/* RESPONSIVITAS                             */
+/* ========================================= */
+@media (max-width: 900px) {
+    .login-split-container {
+        flex-direction: column; /* Normal di mobile */
+    }
+
+    .login-visual-section {
+        display: none; /* Sembunyikan ilustrasi di layar kecil */
+    }
+
+    .login-form-section {
+        padding: 20px;
+    }
+}

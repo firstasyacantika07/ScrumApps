@@ -1,0 +1,87 @@
+/* Dashboard.css / index.css */
+
+/* 1. Import Font Poppins - Penting untuk desain modern */
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* 2. Reset & Base Styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #Ff0000; /* Warna merah utama sesuai permintaan */
+  color: #1f2937;
+  overflow-x: hidden;
+}
+
+/* 3. Custom Scrollbar untuk Main Content */
+/* Agar tampilan tetap bersih saat scrolling */
+main::-webkit-scrollbar {
+  width: 6px;
+}
+
+main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+main::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 4. Glassmorphism Effect untuk Header */
+/* Memberikan efek blur transparan pada bagian sapaan admin */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 5. Utility Classes untuk Card & Hover */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 6. Animasi Muncul (Fade-In) saat Dashboard dibuka */
+@keyframes dashboardEntry {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-dashboard {
+  animation: dashboardEntry 0.6s ease-out forwards;
+}
+
+/* 7. Recharts Legend Customization */
+/* Menyesuaikan jarak teks pada grafik agar tidak berhimpitan */
+.recharts-legend-item {
+  padding: 5px 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* 8. Responsivitas Tambahan */
+@media (max-width: 768px) {
+  .sidebar-hidden {
+    display: none;
+  }
+}

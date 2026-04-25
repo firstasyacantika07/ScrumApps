@@ -1,0 +1,1027 @@
+/* src/pages/CSS/ProjectList.css */
+
+/* Import Font Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* --- GLOBAL RESET (Hapus latar merah di Gambar 0/1) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fe; /* Latar abu muda kebiruan */
+    overflow: hidden;
+    color: #1a202c;
+}
+
+/* --- TATA LETAK UTAMA --- */
+.scrumapps-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- 1. SIDEBAR (Gelap) --- */
+.scrum-sidebar {
+    width: 260px;
+    background-color: #1a1c23; /* Dark gray kehitaman sesuai Gambar 2 */
+    color: #a0aec0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-logo {
+    padding: 10px 25px 30px 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-logo span {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.nav-item.active {
+    background-color: #ee1e2d; /* Merah ScrumApps sesuai Gambar 2 */
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    padding: 20px 25px;
+    font-size: 10px;
+    color: #718096;
+    border-top: 1px solid #2d3748;
+}
+
+/* --- 2. AREA UTAMA --- */
+.scrum-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f7fe;
+}
+
+/* TOP NAVBAR (Putih) */
+.scrum-header {
+    height: 70px;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* BREADCRUMB */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.bc-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background-color: #f7fafc;
+    color: #a0aec0;
+}
+
+.bc-sep {
+    color: #cbd5e1;
+    font-size: 18px;
+    margin: 0 -2px;
+}
+
+.bc-text {
+    color: #718096;
+}
+
+.bc-active {
+    color: #ee1e2d;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* KONTEN UTAMA */
+.scrum-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.content-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.content-header p {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 5px;
+}
+
+/* GRID PROYEK (Sama seperti Gambar 2) */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+/* KARTU PROYEK (CARD) */
+.project-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #edf2f7;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.card-body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Kartu Tambah Baru (Paling Kiri) */
+.add-new-card {
+    border: 1px solid #e2e8f0;
+}
+
+.add-label {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 12px;
+}
+
+.btn-add {
+    background-color: #ee1e2d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #d41624;
+}
+
+/* Kartu Data Proyek */
+.data-card .card-header-visual {
+    height: 50px;
+    background-color: #fee2e2; /* Pink muda atas sesuai Gambar 2 */
+}
+
+.client-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -30px; /* Tarik ikon ke atas menimpa pink */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 3px solid white;
+}
+
+.project-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 15px;
+    color: #1a202c;
+    text-transform: uppercase;
+}
+
+.project-client {
+    font-size: 10px;
+    color: #a0aec0;
+    margin-top: 2px;
+}
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #38a169;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 8px #38a169;
+    animation: pulse 2s infinite;
+}
+/* --- DASHBOARD SPECIFIC STYLES --- */
+
+/* Layout Grid Statistik (Baris Atas) */
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card-small {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    /* Border kiri dashed diset via inline style di JSX */
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a202c;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #a0aec0;
+    margin-top: 4px;
+}
+
+/* Layout Utama Tengah (Chart & Info) */
+.dashboard-main-layout {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-container-card, .info-illustration-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid #edf2f7;
+}
+
+.chart-title, .info-title, .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+/* Custom Legend untuk Pie Chart */
+.custom-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #718096;
+    font-weight: 500;
+}
+
+.legend-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+/* Kartu Ilustrasi */
+.illustration-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.illustration-wrapper img {
+    width: 80%;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+.info-text {
+    font-size: 11px;
+    color: #4a5568;
+    line-height: 1.7;
+    text-align: center;
+    background-color: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* Bagian Proyek Terbaru (Baris Bawah) */
+.recent-projects-section {
+    margin-top: 10px;
+}
+
+.recent-grid {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mini-project-card {
+    background-color: white;
+    width: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #edf2f7;
+    transition: transform 0.2s;
+}
+
+.mini-project-card:hover {
+    transform: translateY(-2px);
+}
+
+.mini-card-header {
+    height: 35px;
+    background-color: #fee2e2;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.mini-icon-circle {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 14px;
+}
+
+.mini-card-body {
+    padding: 22px 15px 15px 15px;
+    text-align: center;
+}
+
+.mini-card-body h4 {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.mini-card-body p {
+    font-size: 10px;
+    color: #a0aec0;
+}
+
+/* Tombol Lihat Lebih Lengkap */
+.btn-view-more {
+    border: 2px dashed #ee1e2d;
+    background: transparent;
+    color: #ee1e2d;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-view-more:hover {
+    background-color: #ee1e2d;
+    color: white;
+    border-style: solid;
+}
+
+/* Dropdown Menu Custom (Agar Konsisten) */
+.dropdown-menu-custom {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 8px 0;
+    z-index: 1000;
+    width: 170px;
+    border: 1px solid #edf2f7;
+}
+
+.dropdown-item {
+    padding: 10px 18px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4a5568;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.dropdown-item.text-red {
+    color: #ee1e2d;
+}
+
+.dropdown-item.text-red:hover {
+    background-color: #fff5f5;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #edf2f7;
+    margin: 4px 0;
+}
+
+/* Utilities */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-3 { gap: 0.75rem; }
+.mr-4 { margin-right: 1rem; }
+.border-r { border-right: 1px solid; }
+.pr-4 { padding-right: 1rem; }
+.text-gray-100 { border-color: #f1f5f9; }
+.text-right { text-align: right; }
+.cursor-pointer { cursor: pointer; }
+/* src/pages/CSS/ProjectList.css */
+
+/* --- GLOBAL RESET (Hapus latar merah di Gambar 0/1) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fe; /* Latar abu muda kebiruan */
+    overflow: hidden;
+    color: #1a202c;
+}
+
+/* --- TATA LETAK UTAMA --- */
+.scrumapps-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- 1. SIDEBAR (Gelap) --- */
+.scrum-sidebar {
+    width: 260px;
+    background-color: #1a1c23; /* Dark gray kehitaman sesuai Gambar 2 */
+    color: #a0aec0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-logo {
+    padding: 10px 25px 30px 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-logo span {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.nav-item.active {
+    background-color: #ee1e2d; /* Merah ScrumApps sesuai Gambar 2 */
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    padding: 20px 25px;
+    font-size: 10px;
+    color: #718096;
+    border-top: 1px solid #2d3748;
+}
+
+/* --- 2. AREA UTAMA --- */
+.scrum-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f7fe;
+}
+
+/* TOP NAVBAR (Putih) */
+.scrum-header {
+    height: 70px;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* BREADCRUMB */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.bc-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background-color: #f7fafc;
+    color: #a0aec0;
+}
+
+.bc-sep {
+    color: #cbd5e1;
+    font-size: 18px;
+    margin: 0 -2px;
+}
+
+.bc-text {
+    color: #718096;
+}
+
+.bc-active {
+    color: #ee1e2d;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* KONTEN UTAMA */
+.scrum-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.content-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.content-header p {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 5px;
+}
+
+/* GRID PROYEK (Sama seperti Gambar 2) */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+/* KARTU PROYEK (CARD) */
+.project-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #edf2f7;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.card-body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Kartu Tambah Baru (Paling Kiri) */
+.add-new-card {
+    border: 1px solid #e2e8f0;
+}
+
+.add-label {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 12px;
+}
+
+.btn-add {
+    background-color: #ee1e2d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #d41624;
+}
+
+/* Kartu Data Proyek */
+.data-card .card-header-visual {
+    height: 50px;
+    background-color: #fee2e2; /* Pink muda atas sesuai Gambar 2 */
+}
+
+.client-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -30px; /* Tarik ikon ke atas menimpa pink */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 3px solid white;
+}
+
+.project-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 15px;
+    color: #1a202c;
+    text-transform: uppercase;
+}
+
+.project-client {
+    font-size: 10px;
+    color: #a0aec0;
+    margin-top: 2px;
+}
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #38a169;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 8px #38a169;
+    animation: pulse 2s infinite;
+}
+/* --- DASHBOARD SPECIFIC STYLES --- */
+
+/* Layout Grid Statistik (Baris Atas) */
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card-small {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    /* Border kiri dashed diset via inline style di JSX */
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a202c;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #a0aec0;
+    margin-top: 4px;
+}
+
+/* Layout Utama Tengah (Chart & Info) */
+.dashboard-main-layout {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-container-card, .info-illustration-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid #edf2f7;
+}
+
+.chart-title, .info-title, .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+/* Custom Legend untuk Pie Chart */
+.custom-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #718096;
+    font-weight: 500;
+}
+
+.legend-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+/* Kartu Ilustrasi */
+.illustration-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.illustration-wrapper img {
+    width: 80%;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+.info-text {
+    font-size: 11px;
+    color: #4a5568;
+    line-height: 1.7;
+    text-align: center;
+    background-color: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* Bagian Proyek Terbaru (Baris Bawah) */
+.recent-projects-section {
+    margin-top: 10px;
+}
+
+.recent-grid {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mini-project-card {
+    background-color: white;
+    width: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #edf2f7;
+    transition: transform 0.2s;
+}
+
+.mini-project-card:hover {
+    transform: translateY(-2px);
+}
+
+.mini-card-header {
+    height: 35px;
+    background-color: #fee2e2;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.mini-icon-circle {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 14px;
+}
+
+.mini-card-body {
+    padding: 22px 15px 15px 15px;
+    text-align: center;
+}
+
+.mini-card-body h4 {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.mini-card-body p {
+    font-size: 10px;
+    color: #a0aec0;
+}
+
+/* Tombol Lihat Lebih Lengkap */
+.btn-view-more {
+    border: 2px dashed #ee1e2d;
+    background: transparent;
+    color: #ee1e2d;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-view-more:hover {
+    background-color: #ee1e2d;
+    color: white;
+    border-style: solid;
+}
+
+/* Dropdown Menu Custom (Agar Konsisten) */
+.dropdown-menu-custom {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 8px 0;
+    z-index: 1000;
+    width: 170px;
+    border: 1px solid #edf2f7;
+}
+
+.dropdown-item {
+    padding: 10px 18px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4a5568;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.dropdown-item.text-red {
+    color: #ee1e2d;
+}
+
+.dropdown-item.text-red:hover {
+    background-color: #fff5f5;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #edf2f7;
+    margin: 4px 0;
+}
+
+/* Utilities */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-3 { gap: 0.75rem; }
+.mr-4 { margin-right: 1rem; }
+.border-r { border-right: 1px solid; }
+.pr-4 { padding-right: 1rem; }
+.text-gray-100 { border-color: #f1f5f9; }
+.text-right { text-align: right; }
+.cursor-pointer { cursor: pointer; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
