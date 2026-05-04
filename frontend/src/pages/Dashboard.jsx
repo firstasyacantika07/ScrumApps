@@ -1,259 +1,211 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, Briefcase, Users, Info, 
-  Settings, LogOut, Layers3, Bell, User,
-  Package, FolderOpen, RefreshCcw, CheckCircle2, AlertCircle, Search 
+import {
+  LayoutDashboard, Briefcase, CheckCircle2,
+  Package, RefreshCcw, Clock
 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import {
+  PieChart, Pie, Cell,
+  ResponsiveContainer, Tooltip, Legend
+} from 'recharts';
+
 import api from '../api/axios';
-import './css/Projectlist.css'; 
+import Layout from '../components/shared/Layout';
+
+const StatCard = ({ label, value, icon, borderColor, iconBg, iconColor }) => (
+  <div
+    className="bg-white p-5 rounded-xl border flex justify-between items-center hover:scale-105 transition"
+    style={{ borderColor }}
+  >
+    <div>
+      <div className="text-3xl font-extrabold text-slate-800">
+        {value}
+      </div>
+      <div
+        className="text-[11px] font-bold uppercase"
+        style={{ color: iconColor }}
+      >
+        {label}
+      </div>
+    </div>
+    <div
+      className="p-2.5 rounded-lg"
+      style={{ background: iconBg, color: iconColor }}
+    >
+      {icon}
+    </div>
+  </div>
+);
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  // State untuk data dari Database
-  const [stats, setStats] = useState({ total: 0, hold: 0, progress: 0, done: 0, late: 0 });
-  const [recentProjects, setRecentProjects] = useState([]);
+
+  const [stats, setStats] = useState({
+    total: 0,
+    hold: 0,
+    onProgress: 0,
+    done: 0,
+    archive: 0
+  });
+
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    // 1. Ambil data user dari localStorage
-    const loggedInUser = localStorage.getItem('user');
-    
-    if (!loggedInUser) {
-      navigate('/login');
-      return;
-    }
-
-    // Parsing data user dengan aman
-    try {
-      const user = JSON.parse(loggedInUser);
-      setUserData(user);
-    } catch (e) {
-      console.error("Gagal parsing user data");
-      navigate('/login');
-      return;
-    }
-
-    // 2. Definisikan fungsi fetch TERLEBIH DAHULU
-    const fetchDashboardData = async () => {
+    const fetchStats = async () => {
       try {
         setLoading(true);
-        const [statsRes, projectsRes] = await Promise.all([
-          api.get('/projects/stats'),
-          api.get('/projects')
-        ]);
-        
-        setStats(statsRes.data || { total: 0, hold: 0, progress: 0, done: 0, late: 0 });
-        setRecentProjects(projectsRes.data ? projectsRes.data.slice(0, 2) : []);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+
+        const res = await api.get('/projects/stats');
+
+        const data = res.data;
+
+        setStats({
+          total: data.total || 0,
+          hold: data.hold || 0,
+          onProgress: data.onProgress || 0,
+          done: data.done || 0,
+          archive: data.archive || 0,
+        });
+
+      } catch (err) {
+        console.error("STATS ERROR:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    // 3. Panggil fungsi SETELAH didefinisikan
-    fetchDashboardData();
+    fetchStats();
+  }, []);
 
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
-  // Konfigurasi Pie Chart
-  const pieData = [
-    { name: 'HOLD', value: stats.hold || 0, color: '#A0AEC0' },
-    { name: 'IN PROGRESS', value: stats.progress || 0, color: '#F6AD55' },
-    { name: 'DONE', value: stats.done || 0, color: '#68D391' },
-    { name: 'LATE', value: stats.late || 0, color: '#FC8181' },
-  ];
-
-  // Cegah layar putih: Tampilkan loading jika data user belum siap
-  if (!userData) {
-    return <div className="loading-screen">Mengautentikasi...</div>;
-  }
+const pieData = [
+  { name: 'Hold', value: stats.hold, color: '#f59e0b' },
+  { name: 'On Progress', value: stats.onProgress, color: '#3b82f6' },
+  { name: 'Done', value: stats.done, color: '#10b981' },
+  { name: 'Archive', value: stats.archive, color: '#6366f1' },
+];
 
   return (
-    <div className="scrumapps-wrapper">
-      <aside className="scrum-sidebar">
-        <div className="sidebar-logo">
-          <div className="logo-box"><Layers3 color="white" size={20} /></div>
-          <span className="logo-text">ScrumApps</span>
+    <Layout title="Dashboard">
+
+      <div className="flex flex-col gap-6">
+
+        {/* STAT CARDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+
+          <StatCard
+            label="Total Proyek"
+            value={stats.total}
+            icon={<Briefcase size={20} />}
+            borderColor="#e2e8f0"
+            iconBg="#f8fafc"
+            iconColor="#64748b"
+          />
+
+          <StatCard
+            label="Hold"
+            value={stats.hold}
+            icon={<Clock size={20} />}
+            borderColor="#fef3c7"
+            iconBg="#fffbeb"
+            iconColor="#f59e0b"
+          />
+
+          <StatCard
+            label="On Progress"
+            value={stats.onProgress}
+            icon={<RefreshCcw size={20} />}
+            borderColor="#dbeafe"
+            iconBg="#eff6ff"
+            iconColor="#3b82f6"
+          />
+
+          <StatCard
+            label="Done"
+            value={stats.done}
+            icon={<CheckCircle2 size={20} />}
+            borderColor="#d1fae5"
+            iconBg="#ecfdf5"
+            iconColor="#10b981"
+          />
+
+          <StatCard
+            label="Archive"
+            value={stats.archive}
+            icon={<Package size={20} />}
+            borderColor="#e0e7ff"
+            iconBg="#eef2ff"
+            iconColor="#6366f1"
+          />
+
         </div>
 
-        <nav className="sidebar-nav">
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <LayoutDashboard size={20} /> <span>Dashboard</span>
-          </NavLink>
-          <NavLink to="/projects" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Briefcase size={20} /> <span>Proyek</span>
-          </NavLink>
-          <NavLink to="/users" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Users size={20} /> <span>Pengguna</span>
-          </NavLink>
-          <NavLink to="/info" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-            <Info size={20} /> <span>Sistem</span>
-          </NavLink>
-        </nav>
+        {/* CHART */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <div className="sidebar-bottom-section">
-          <div className="sidebar-profile">
-            <img src={`https://ui-avatars.com/api/?name=${userData?.username || 'User'}&background=ee1e2d&color=fff`} alt="User" />
-            <div className="profile-info">
-              <p className="p-name">{userData?.username || 'Guest'}</p>
-              <p className="p-role">{userData?.role || 'User'}</p>
-            </div>
-          </div>
-          <div className="sidebar-footer">
-            <p>© 2026 <strong>ScrumApps</strong>.</p>
-          </div>
-        </div>
-      </aside>
+          <div className="lg:col-span-2 bg-white p-6 rounded-xl border shadow-sm">
 
-      <main className="scrum-main">
-        <header className="scrum-header">
-          <div className="header-left">
-            <div className="breadcrumb">
-              <span className="bc-icon-red"><LayoutDashboard size={16} /></span>
-              <span className="bc-text bc-active">Dashboard</span>
-            </div>
-            <form className="header-search-form">
-              <Search size={18} color="#a0aec0" className="search-icon" />
-              <input 
-                type="text" 
-                placeholder="Cari proyek..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </form>
-          </div>
-          
-          <div className="header-right">
-            <div className="admin-profile-section">
-              <div className="text-right">
-                {/* Gunakan optional chaining agar tidak crash jika username null */}
-                <p className="admin-name">Halo, {userData?.username?.split(' ')[0] || 'User'}!</p>
-                <p className="admin-email">{userData?.email || ''}</p>
-              </div>
-              <div className="admin-avatar">
-                <img src={`https://ui-avatars.com/api/?name=${userData?.username || 'User'}&background=ee1e2d&color=fff`} alt="avatar" />
-              </div>
-            </div>
-            <Bell size={20} color="#a0aec0" className="cursor-pointer" />
-            <div className="settings-wrapper">
-              <Settings size={20} color="#a0aec0" className="cursor-pointer" onClick={() => setIsSettingsOpen(!isSettingsOpen)} />
-              {isSettingsOpen && (
-                <div className="dropdown-menu-custom">
-                  <div onClick={() => navigate('/kelolaprofil')} className="dropdown-item">
-                    <User size={16} /> Profil
-                  </div>
-                  <div className="dropdown-divider"></div>
-                  <div onClick={handleLogout} className="dropdown-item text-red">
-                    <LogOut size={16} /> Keluar
-                  </div>
+            <h3 className="text-sm font-bold mb-6">
+              STATISTIK PROYEK
+            </h3>
+
+            <div className="h-[300px]">
+
+              {loading ? (
+                <div className="flex justify-center items-center h-full text-gray-400">
+                  Loading chart...
                 </div>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <div className="scrum-content">
-          <div className="dashboard-stats-grid">
-            <StatCardSmall label="Total Proyek" value={stats.total} icon={<Package size={22}/>} borderColor="#3182CE" />
-            <StatCardSmall label="Hold" value={stats.hold} icon={<FolderOpen size={22}/>} borderColor="#718096" />
-            <StatCardSmall label="In Progress" value={stats.progress} icon={<RefreshCcw size={22}/>} borderColor="#D69E2E" />
-            <StatCardSmall label="Done" value={stats.done} icon={<CheckCircle2 size={22}/>} borderColor="#38A169" />
-            <StatCardSmall label="Late" value={stats.late || 0} icon={<AlertCircle size={22}/>} borderColor="#E53E3E" />
-          </div>
-
-          <div className="dashboard-main-layout">
-            <div className="chart-container-card">
-              <h3 className="chart-title">Status Proyek Real-time</h3>
-              <div style={{ width: '100%', height: 250 }}>
+              ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                      {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
+
+                    <Pie
+                      data={pieData}
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={index} fill={entry.color} />
+                      ))}
                     </Pie>
+
                     <Tooltip />
+                    <Legend />
+
                   </PieChart>
                 </ResponsiveContainer>
-              </div>
-              <div className="custom-legend">
-                {pieData.map((item) => (
-                  <div key={item.name} className="legend-item">
-                    <span className="dot" style={{ backgroundColor: item.color }}></span>
-                    <span>{item.name} ({item.value})</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="info-illustration-card">
-              <div className="info-header">
-                <h3 className="info-title">ScrumApps Productivity</h3>
-                <span className="badge-new">v1.0</span>
-              </div>
-              <div className="illustration-wrapper">
-                <img src="https://cdni.iconscout.com/illustration/premium/thumb/business-task-management-4487339-3723237.png" alt="Scrum" />
-              </div>
-              <p className="info-text">Monitoring progres tim Informatics Engineering secara real-time.</p>
-            </div>
-          </div>
-
-          <div className="recent-projects-section">
-            <div className="section-header">
-               <h3 className="section-title">Proyek Terbaru</h3>
-               <button className="btn-text-only" onClick={() => navigate('/projects')}>Lihat Semua</button>
-            </div>
-            <div className="recent-grid">
-              {recentProjects.length > 0 ? recentProjects.map((p) => (
-                <ProjectMiniCard 
-                  key={p.id} 
-                  title={p.project_name} 
-                  status={p.project_status} 
-                  icon={p.project_status === 'Done' ? '✅' : '📁'} 
-                  onClick={() => navigate(`/projects/${p.id}`)} 
-                />
-              )) : (
-                <p className="text-gray-400">Belum ada proyek terbaru.</p>
               )}
+
             </div>
+
           </div>
+
+          {/* INFO BOX */}
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+
+            <div className="bg-gradient-to-r from-red-500 to-red-700 p-5 rounded-xl text-white">
+
+              <p className="text-xs opacity-80">
+                Butuh bantuan?
+              </p>
+
+              <h4 className="font-bold">
+                Panduan Sistem
+              </h4>
+
+              <button className="mt-3 bg-white text-red-600 px-4 py-2 rounded-lg text-xs font-bold">
+                Buka
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
-      </main>
-    </div>
+
+      </div>
+
+    </Layout>
   );
 };
-
-const StatCardSmall = ({ label, value, icon, borderColor }) => (
-  <div className="stat-card-small" style={{ borderLeft: `4px solid ${borderColor}` }}>
-    <div className="stat-content">
-      <p className="stat-value">{value}</p>
-      <p className="stat-label">{label}</p>
-    </div>
-    <div className="stat-icon" style={{ backgroundColor: `${borderColor}20`, color: borderColor }}>{icon}</div>
-  </div>
-);
-
-const ProjectMiniCard = ({ title, status, icon, onClick }) => (
-  <div className="mini-project-card" onClick={onClick}>
-    <div className="mini-card-left">
-      <span className="mini-icon-circle">{icon}</span>
-      <div>
-        <h4>{title}</h4>
-        <p className="status-text">{status}</p>
-      </div>
-    </div>
-    <div className="mini-card-arrow">→</div>
-  </div>
-);
 
 export default Dashboard;

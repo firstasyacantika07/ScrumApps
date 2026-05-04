@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        'scrum-red': '#ee1e2d',
-      }
+        'scrum-red': '#D31217',
+      },
     },
   },
   plugins: [],
