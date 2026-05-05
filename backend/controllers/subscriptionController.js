@@ -5,7 +5,7 @@ const db = require('../config/db'); // Sesuai struktur Anda
 // Midtrans Sandbox Config (dari kode Anda)
 const snap = new midtransClient.Snap({
     isProduction: false,
-    serverKey: 'Mid-server-EvMn16OPys8sVXzf3VdGHB5x',
+    serverKey = process.env.MIDTRANS_SERVER_KEY;,
     clientKey: 'Mid-client-dgGTw7MIK1F7fdLK'
 });
 
