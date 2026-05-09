@@ -1,94 +1,185 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Routes, Route, NavLink, useParams, useNavigate } from 'react-router-dom';
-import { 
-  Briefcase, Plus, MoreVertical, RefreshCw, AlertCircle, Calendar, 
-  Layout as KanbanIcon, Target, CheckCircle2
+import {
+  Routes,
+  Route,
+  NavLink,
+  useParams,
+  Navigate
+} from 'react-router-dom';
+
+import {
+  Briefcase,
+  Eye,
+  Target,
+  RefreshCw,
+  Code2,
+  Calendar,
+  Users,
+  LayoutDashboard,
+  Bell,
+  ActivitySquare
 } from 'lucide-react';
-import api from '../api/axios'; 
+
+import api from '../api/axios';
 import Layout from '../components/shared/Layout';
+
+import VisionBoard from '../components/project/VisionBoard';
+import Backlog from '../components/project/Backlog';
+import Sprint from '../components/project/Sprint';
+import TaskBoard from '../components/project/TaskBoard';
+import Development from '../components/project/Development';
+import Members from '../components/project/Members';
+import CalendarPage from '../components/project/CalendarPage';
+import Notifications from '../components/project/Notifications';
+import ActivityLogs from '../components/project/ActivityLogs';
 
 const ProjectDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [projectData, setProjectData] = useState(null);
+
+  const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = useCallback(async () => {
+  const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
-      const projRes = await api.get(`/projects/${id}`);
-      setProjectData(projRes.data);
-    } catch (err) { console.error(err); } 
-    finally { setLoading(false); }
+
+      const res = await api.get(`/projects/${id}`);
+
+      setProject(res.data);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
 
-  if (loading) return <div className="flex h-screen items-center justify-center text-scrum-red font-bold">Memuat...</div>;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
-    <Layout title={projectData?.name || "Detail Proyek"}>
+    <Layout title={project?.name}>
+
       <div className="space-y-6">
-        {/* Header / Tab Navigation */}
-        <div className="flex items-center justify-between bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex gap-1">
-            <TabLink to="backlog" icon={<Target size={16}/>} label="Backlog" />
-            <TabLink to="sprint" icon={<RefreshCw size={16}/>} label="Sprint" />
-            <TabLink to="board" icon={<KanbanIcon size={16}/>} label="Board" />
+
+        {/* HEADER */}
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+
+          <div className="flex items-center gap-5">
+
+            <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center">
+              <Briefcase size={30} />
+            </div>
+
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">
+                {project?.name}
+              </h1>
+
+              <p className="text-gray-400 mt-1">
+                {project?.description}
+              </p>
+            </div>
+
           </div>
-          <button className="bg-scrum-red text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-red-700">
-            <Plus size={16} /> Item Baru
-          </button>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+
+            <InfoCard title="Status" value={project?.status} />
+            <InfoCard title="Start Date" value={project?.start_date} />
+            <InfoCard title="End Date" value={project?.end_date} />
+            <InfoCard title="Members" value={project?.member_total || 0} />
+
+          </div>
+
         </div>
 
-        {/* Content Area */}
-        <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm min-h-[400px]">
-          <Routes>
-            <Route path="/" element={<div className="text-center text-gray-400 mt-20">Pilih menu di atas untuk melihat detail.</div>} />
-            <Route path="backlog" element={<BacklogContent />} />
-            <Route path="sprint" element={<SprintContent />} />
-          </Routes>
+        {/* TAB */}
+        <div className="bg-white p-2 rounded-2xl border border-gray-100 flex flex-wrap gap-2">
+
+          <TabLink to="vision-board" icon={<Eye size={16} />} label="Vision Board" />
+          <TabLink to="backlog" icon={<Target size={16} />} label="Backlog" />
+          <TabLink to="sprint" icon={<RefreshCw size={16} />} label="Sprint" />
+          <TabLink to="task-board" icon={<Code2 size={16} />} label="Task Board" />
+          <TabLink to="development" icon={<Code2 size={16} />} label="Development" />
+          <TabLink to="calendar" icon={<Calendar size={16} />} label="Calendar" />
+          <TabLink to="members" icon={<Users size={16} />} label="Members" />
+          <TabLink to="notifications" icon={<Bell size={16} />} label="Notifications" />
+          <TabLink to="logs" icon={<ActivitySquare size={16} />} label="Activity Logs" />
+
         </div>
+
+        {/* CONTENT */}
+        <div className="bg-white rounded-3xl border border-gray-100 p-8 min-h-[600px]">
+
+          <Routes>
+
+
+            <Route path="vision-board" element={<VisionBoard projectId={id} />} />
+
+            <Route path="backlog" element={<Backlog projectId={id} />} />
+
+            <Route path="sprint" element={<Sprint projectId={id} />} />
+
+            <Route path="task-board" element={<TaskBoard projectId={id} />} />
+
+            <Route path="development" element={<Development projectId={id} />} />
+
+            <Route path="calendar" element={<CalendarPage projectId={id} />} />
+
+            <Route path="members" element={<Members projectId={id} />} />
+
+            <Route path="notifications" element={<Notifications projectId={id} />} />
+
+            <Route path="logs" element={<ActivityLogs projectId={id} />} />
+
+          </Routes>
+
+        </div>
+
       </div>
+
     </Layout>
   );
 };
 
 const TabLink = ({ to, icon, label }) => (
-  <NavLink 
-    to={to} 
-    className={({ isActive }) => `flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all ${
-      isActive ? 'bg-scrum-red text-white shadow-md' : 'text-gray-400 hover:bg-gray-50'
-    }`}
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `px-5 py-3 rounded-xl flex items-center gap-2 text-sm font-bold transition
+      ${
+        isActive
+          ? 'bg-red-500 text-white'
+          : 'text-gray-500 hover:bg-gray-50'
+      }`
+    }
   >
-    {icon} {label}
+    {icon}
+    {label}
   </NavLink>
 );
 
-const BacklogContent = () => (
-  <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-gray-100 rounded-3xl">
-    <div className="p-4 bg-rose-50 text-scrum-red rounded-full mb-4"><AlertCircle size={32}/></div>
-    <h3 className="font-bold text-gray-700">Belum ada Backlog</h3>
-    <p className="text-sm text-gray-400">Tambahkan requirement proyek untuk memulai.</p>
-  </div>
-);
+const InfoCard = ({ title, value }) => (
+  <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
 
-const SprintContent = () => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <KanbanColumn title="To Do" color="bg-gray-100" />
-    <KanbanColumn title="In Progress" color="bg-blue-50 text-blue-600" />
-    <KanbanColumn title="Done" color="bg-green-50 text-green-600" />
-  </div>
-);
-
-const KanbanColumn = ({ title, color }) => (
-  <div className="bg-gray-50 rounded-2xl min-h-[300px]">
-    <div className={`p-4 font-bold text-sm border-b border-gray-200/50 ${color} rounded-t-2xl`}>
+    <p className="text-sm text-gray-400">
       {title}
-    </div>
-    <div className="p-4">
-      <div className="text-center text-[11px] text-gray-400 py-10 uppercase tracking-widest font-bold">Kosong</div>
-    </div>
+    </p>
+
+    <h3 className="font-bold text-xl mt-2 text-gray-700">
+      {value}
+    </h3>
+
   </div>
 );
 

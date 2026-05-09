@@ -1,7 +1,6 @@
-// postcss.config.js ✅ BENAR
 export default {
   plugins: {
-    '@tailwindcss/postcss': {},
+    "@tailwindcss/postcss": {},
     autoprefixer: {},
   },
-};
+}

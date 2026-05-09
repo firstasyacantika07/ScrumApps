@@ -5,22 +5,23 @@ const db = require('../config/db');
  */
 exports.getProjects = async (req, res) => {
   try {
+    console.log("USER:", req.user);
+
     const userId = req.user?.id;
     const tenantId = req.user?.tenant_id || 0;
 
     const [rows] = await db.query(
-      `SELECT * FROM tbr_project WHERE user_id = ? AND tenant_id = ?`,
+      `SELECT * FROM tbr_projects WHERE user_id = ? AND tenant_id = ?`,
       [userId, tenantId]
     );
 
     res.json(rows);
 
   } catch (err) {
-    console.error("❌ GET PROJECT ERROR:", err);
+    console.error("GET PROJECT ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 };
-
 /**
  * CREATE PROJECT
  */
@@ -30,7 +31,7 @@ exports.createProject = async (req, res) => {
     const tenantId = req.user?.tenant_id || 0;
 
     const sql = `
-      INSERT INTO tbr_project 
+      INSERT INTO tbr_projects 
       (name, start_date, end_date, status, icon, label, user_id, tenant_id, \`read\`, trello_board_id)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
@@ -70,7 +71,7 @@ exports.updateProject = async (req, res) => {
     const tenantId = req.user?.tenant_id || 0;
 
     await db.query(
-      `UPDATE tbr_project 
+      `UPDATE tbr_projects 
        SET name=?, start_date=?, end_date=?, status=? 
        WHERE id=? AND user_id=? AND tenant_id=?`,
       [
@@ -101,7 +102,7 @@ exports.deleteProject = async (req, res) => {
     const tenantId = req.user?.tenant_id || 0;
 
     await db.query(
-      `DELETE FROM tbr_project WHERE id=? AND user_id=? AND tenant_id=?`,
+      `DELETE FROM tbr_projects WHERE id=? AND user_id=? AND tenant_id=?`,
       [req.params.id, userId, tenantId]
     );
 
@@ -122,7 +123,7 @@ exports.getProjectStats = async (req, res) => {
 
     const [rows] = await db.query(
       `SELECT status, COUNT(*) as total 
-       FROM tbr_project 
+       FROM tbr_projects 
        WHERE user_id = ?
        GROUP BY status`,
       [userId]

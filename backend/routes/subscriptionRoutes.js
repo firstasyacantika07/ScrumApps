@@ -1,19 +1,17 @@
-// routes/subscriptionRoutes.js
 const express = require('express');
 const router = express.Router();
 
-// Import Controller & Middleware
 const subscriptionController = require('../controllers/subscriptionController');
-const auth = require('../middleware/auth');
+const { verifyToken } = require('../middleware/auth');
 
-// POST /api/subscription/checkout - Buat Midtrans Snap Token
-router.post('/checkout', auth, subscriptionController.createCheckout);
+// POST checkout
+router.post('/checkout', verifyToken, subscriptionController.createCheckout);
 
-// POST /api/subscription/webhook - Midtrans Callback (No Auth)
+// webhook (no auth)
 router.post('/webhook', subscriptionController.handleMidtransWebhook);
 
-// GET /api/subscription/me - Cek subscription user saat ini
-router.get('/me', auth, async (req, res) => {
+// GET subscription user
+router.get('/me', verifyToken, async (req, res) => {
   try {
     res.json({
       success: true,

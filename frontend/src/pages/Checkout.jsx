@@ -10,6 +10,7 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import api from '../api/axios';
+import '../index.css';
 
 const Checkout = () => {
   const location = useLocation();
