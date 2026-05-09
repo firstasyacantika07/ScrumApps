@@ -1,10 +1,16 @@
-/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Tambahkan ini jika ingin scrollbar modern seperti saran sebelumnya */
+@layer base {
+  html {
+    /* Menggunakan Font Inter agar UI terlihat premium */
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
 @layer utilities {
+  /* Custom scrollbar untuk tampilan dashboard yang lebih modern */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }

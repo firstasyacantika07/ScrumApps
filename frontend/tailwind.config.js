@@ -7,8 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'scrum-red': '#D31217',
-      },
+        // Menambahkan warna merah khas ScrumApps Anda
+        'scrum-red': '#ee1e2d',
+      }
     },
   },
   plugins: [],
