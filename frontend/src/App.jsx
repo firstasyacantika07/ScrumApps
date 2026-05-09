@@ -8,6 +8,8 @@ import ProjectDetail from "./pages/ProjectDetail";
 import Users from "./pages/Users"; 
 import Info from "./pages/Info";
 import KelolaProfil from "./pages/KelolaProfil";
+import Pricing from "./pages/Pricing";
+import Checkout from './pages/Checkout';
 import { ROLES } from "./components/shared/sidebarMenu";
 
 function App() {
@@ -38,7 +40,6 @@ function App() {
         <Route path="/kelolaprofil" element={<KelolaProfil/>} />
         <Route path="/pricing" element={<Pricing/>} />
         <Route path="/checkout" element={<Checkout/>} />
-        <Route path="/billing" element={<Billing/>} />
         
         {/* Proteksi Rute Superadmin */}
         <Route 
