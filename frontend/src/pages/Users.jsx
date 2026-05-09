@@ -4,10 +4,10 @@ import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import { Search, Filter, Plus, X, User } from 'lucide-react';
 import { getUsers, createUser, deleteUser } from '../service/userService';
+import '../index.css';
 
 const Users = () => {
 
-  // ================= STATE =================
   const [usersData, setUsersData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -23,12 +23,10 @@ const Users = () => {
     gender: 'male'
   });
 
-  // ================= EFFECT =================
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // ================= GET USERS =================
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -41,15 +39,12 @@ const Users = () => {
     }
   };
 
-  // ================= CREATE USER =================
   const handleCreate = async (e) => {
     e.preventDefault();
-
     try {
       await createUser(newUser);
 
       setIsModalOpen(false);
-
       setNewUser({
         name: '',
         email: '',
@@ -65,7 +60,6 @@ const Users = () => {
     }
   };
 
-  // ================= DELETE USER =================
   const handleDelete = async (id) => {
     try {
       await deleteUser(id);
@@ -75,56 +69,66 @@ const Users = () => {
     }
   };
 
-  // ================= CONFIRM DELETE =================
   const confirmDelete = async () => {
-    try {
-      await handleDelete(deleteTarget);
-      setIsDeleteModalOpen(false);
-      setDeleteTarget(null);
-    } catch (err) {
-      console.error(err);
-    }
+    await handleDelete(deleteTarget);
+    setIsDeleteModalOpen(false);
+    setDeleteTarget(null);
   };
 
-  // ================= UI =================
   return (
     <Layout title="Daftar Pengguna">
 
-      {/* TOP BAR */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      {/* CONTAINER */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
 
-        <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">
+              Manajemen Pengguna
+            </h2>
+            <p className="text-sm text-gray-400">
+              Kelola akun pengguna dalam sistem
+            </p>
+          </div>
 
           <Button onClick={() => setIsModalOpen(true)}>
             <Plus size={16} /> Tambah Pengguna
           </Button>
 
-          <div className="flex gap-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
-              <input
-                placeholder="Cari nama atau email..."
-                className="pl-10 pr-4 py-2 border rounded-lg w-64"
-              />
-            </div>
+        </div>
 
-            <button className="px-4 py-2 border rounded-lg flex items-center gap-2">
-              <Filter size={16} /> Filter
-            </button>
+        {/* SEARCH + FILTER */}
+        <div className="flex flex-col md:flex-row gap-3 mb-6">
+
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+            <input
+              placeholder="Cari nama atau email..."
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
           </div>
+
+          <button className="px-4 py-2.5 border border-gray-200 rounded-lg flex items-center gap-2 text-sm hover:bg-gray-50">
+            <Filter size={16} /> Filter
+          </button>
+
         </div>
 
         {/* TABLE */}
         <div className="overflow-x-auto">
 
           {loading ? (
-            <div className="text-center py-10 text-gray-400">Loading...</div>
+            <div className="text-center py-16 text-gray-400 text-sm">
+              Memuat data pengguna...
+            </div>
           ) : (
 
-            <table className="w-full text-left">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-gray-400 border-b">
-                  <th>No</th>
+                <tr className="text-gray-400 border-b text-xs uppercase">
+                  <th className="py-3">No</th>
                   <th>Nama</th>
                   <th>Telepon</th>
                   <th>Email</th>
@@ -135,20 +139,22 @@ const Users = () => {
 
               <tbody>
                 {usersData.map((u, i) => (
-                  <tr key={u.id} className="border-b hover:bg-gray-50">
+                  <tr key={u.id} className="border-b hover:bg-gray-50 transition">
 
-                    <td className="py-3">{i + 1}</td>
+                    <td className="py-4 text-gray-500">{i + 1}</td>
 
-                    <td className="flex items-center gap-2 font-semibold text-blue-600">
-                      <User size={14} />
+                    <td className="flex items-center gap-2 font-semibold text-gray-700">
+                      <div className="w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center">
+                        <User size={14} />
+                      </div>
                       {u.name}
                     </td>
 
-                    <td>{u.phone_number}</td>
-                    <td>{u.email}</td>
+                    <td className="text-gray-600">{u.phone_number}</td>
+                    <td className="text-gray-600">{u.email}</td>
 
                     <td>
-                      <span className="px-2 py-1 bg-gray-100 text-xs rounded">
+                      <span className="px-3 py-1 text-xs bg-gray-100 rounded-full">
                         {u.role}
                       </span>
                     </td>
@@ -159,7 +165,7 @@ const Users = () => {
                           setDeleteTarget(u.id);
                           setIsDeleteModalOpen(true);
                         }}
-                        className="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded"
+                        className="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition"
                       >
                         <X size={14} />
                       </button>
@@ -174,7 +180,7 @@ const Users = () => {
         </div>
       </div>
 
-      {/* ================= CREATE MODAL ================= */}
+      {/* MODAL CREATE */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -184,14 +190,14 @@ const Users = () => {
 
           <input
             placeholder="Nama"
-            className="w-full p-2 border rounded"
+            className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500"
             value={newUser.name}
             onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
           />
 
           <input
             placeholder="Email"
-            className="w-full p-2 border rounded"
+            className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500"
             value={newUser.email}
             onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
           />
@@ -199,20 +205,20 @@ const Users = () => {
           <input
             placeholder="Password"
             type="password"
-            className="w-full p-2 border rounded"
+            className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500"
             value={newUser.password}
             onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
           />
 
           <input
             placeholder="No HP"
-            className="w-full p-2 border rounded"
+            className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500"
             value={newUser.phone_number}
             onChange={(e) => setNewUser({ ...newUser, phone_number: e.target.value })}
           />
 
           <select
-            className="w-full p-2 border rounded"
+            className="w-full p-2.5 border border-gray-200 rounded-lg text-sm"
             value={newUser.role}
             onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
           >
@@ -228,35 +234,36 @@ const Users = () => {
         </form>
       </Modal>
 
-      {/* ================= DELETE MODAL ================= */}
+      {/* MODAL DELETE */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        title="Konfirmasi Hapus User"
+        title="Hapus User"
       >
-        <div className="space-y-4">
+        <div className="space-y-4 text-center">
 
-          <p className="text-gray-600">
-            Apakah kamu yakin ingin menghapus user ini?
+          <p className="text-gray-600 text-sm">
+            Yakin ingin menghapus user ini?
           </p>
 
           <div className="flex gap-3">
 
             <button
               onClick={() => setIsDeleteModalOpen(false)}
-              className="w-full py-2 border rounded-lg"
+              className="w-full py-2 border rounded-lg text-sm"
             >
               Batal
             </button>
 
             <button
               onClick={confirmDelete}
-              className="w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              className="w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm"
             >
               Hapus
             </button>
 
           </div>
+
         </div>
       </Modal>
 

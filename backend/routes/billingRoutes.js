@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Middleware auth (opsional tapi disarankan)
-const { verifyToken, authorize } = require('../middleware/authMiddleware');
+const { verifyToken, authorize } = require('../middleware/auth');
 
 /**
  * 🔒 Semua route billing wajib login

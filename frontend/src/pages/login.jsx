@@ -7,8 +7,9 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,6 +19,8 @@ const Login = () => {
       return;
     }
     setIsLoading(true);
+
+    console.log("Mencoba login dengan:", email);
 
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -61,6 +64,10 @@ const Login = () => {
             Kelola proyek agile kamu dengan lebih mudah dan terstruktur.
           </p>
         </div>
+        
+        {/* Blur Circles using Tailwind */}
+        <div className="absolute rounded-full blur-[100px] z-0 w-[400px] h-[400px] bg-white/15 -top-[150px] -left-[100px]"></div>
+        <div className="absolute rounded-full blur-[100px] z-0 w-[500px] h-[500px] bg-black/10 -bottom-[200px] -right-[100px]"></div>
       </div>
 
       {/* KANAN: Sisi Form Login */}

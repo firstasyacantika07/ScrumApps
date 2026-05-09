@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
-const { verifyToken } = require('../middleware/authMiddleware'); // middleware auth Anda
+const { verifyToken } = require('../middleware/auth'); // middleware auth Anda
 
 // Route untuk user membuat transaksi (Butuh Login)
 router.post('/create-transaction', verifyToken, paymentController.createTransaction);

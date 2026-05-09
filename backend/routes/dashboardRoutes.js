@@ -5,7 +5,7 @@ const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
 
 // Middleware (PASTIKAN path & nama file benar)
-const { verifyToken, authorize } = require('../middleware/authMiddleware');
+const { verifyToken, authorize } = require('../middleware/auth');
 
 // 🔒 Semua route di bawah ini WAJIB login
 router.use(verifyToken);

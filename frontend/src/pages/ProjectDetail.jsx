@@ -7,22 +7,40 @@ import {
 } from 'lucide-react';
 import api from '../api/axios'; 
 
+import VisionBoard from '../components/project/VisionBoard';
+import Backlog from '../components/project/Backlog';
+import Sprint from '../components/project/Sprint';
+import TaskBoard from '../components/project/TaskBoard';
+import Development from '../components/project/Development';
+import Members from '../components/project/Members';
+import CalendarPage from '../components/project/CalendarPage';
+import Notifications from '../components/project/Notifications';
+import ActivityLogs from '../components/project/ActivityLogs';
+
 const ProjectDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [projectData, setProjectData] = useState(null);
+
+  const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = useCallback(async () => {
+  const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
-      const projRes = await api.get(`/projects/${id}`);
-      setProjectData(projRes.data);
-    } catch (err) { console.error(err); } 
-    finally { setLoading(false); }
+
+      const res = await api.get(`/projects/${id}`);
+
+      setProject(res.data);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
 
   if (loading) return (
     <div className="flex h-64 items-center justify-center">
@@ -74,6 +92,35 @@ const ProjectDetail = () => {
             <Plus size={18} strokeWidth={3} /> NEW ITEM
           </button>
         </div>
+
+        {/* CONTENT */}
+        <div className="bg-white rounded-3xl border border-gray-100 p-8 min-h-[600px]">
+
+          <Routes>
+
+
+            <Route path="vision-board" element={<VisionBoard projectId={id} />} />
+
+            <Route path="backlog" element={<Backlog projectId={id} />} />
+
+            <Route path="sprint" element={<Sprint projectId={id} />} />
+
+            <Route path="task-board" element={<TaskBoard projectId={id} />} />
+
+            <Route path="development" element={<Development projectId={id} />} />
+
+            <Route path="calendar" element={<CalendarPage projectId={id} />} />
+
+            <Route path="members" element={<Members projectId={id} />} />
+
+            <Route path="notifications" element={<Notifications projectId={id} />} />
+
+            <Route path="logs" element={<ActivityLogs projectId={id} />} />
+
+          </Routes>
+
+        </div>
+
       </div>
 
       {/* TAB NAVIGATION */}
@@ -108,7 +155,8 @@ const TabLink = ({ to, icon, label }) => (
         : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
     }`}
   >
-    {icon} {label}
+    {icon}
+    {label}
   </NavLink>
 );
 

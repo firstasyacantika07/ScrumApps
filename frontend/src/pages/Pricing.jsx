@@ -9,6 +9,7 @@ import {
   ShieldCheck 
 } from 'lucide-react';
 import api from '../api/axios';
+import '../index.css';
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
