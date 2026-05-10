@@ -1,6 +1,6 @@
 const snap = require('../services/midtrans');
 const crypto = require('crypto');
-const UserModel = require('../src/models/userModel');
+const UserModel = require('../models/userModel');
 
 /**
  * 1. Membuat Transaksi Pembayaran (Snap Token)
