@@ -11,9 +11,9 @@ import KelolaProfil from "./pages/KelolaProfil";
 import Pricing from "./pages/Pricing";
 import Checkout from './pages/Checkout';
 import { ROLES } from "./components/shared/sidebarMenu";
+import MainLayout from "./layouts/MainLayout"; 
 
 function App() {
-  // Ambil data user dari storage untuk pengecekkan role
   const user = JSON.parse(localStorage.getItem('user'));
   const userRole = user?.role; 
 
@@ -25,29 +25,27 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Rute Utama dengan Sidebar (Dashboard, Proyek, dll) */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/projects" element={<ProjectList />} />
-        
-        {/* RUTE DETAIL PROYEK: 
-          Diletakkan sejajar agar tidak terpengaruh oleh layout sidebar di Dashboard/ProjectList.
-          Ini akan membuat ProjectDetail tampil Full Screen.
-        */}
-        <Route path="/projects/:id/*" element={<ProjectDetail />} />
+        {/* Rute dengan Sidebar (MainLayout) */}
+        <Route element={<MainLayout userData={user} />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects" element={<ProjectList />} />
+          <Route path="/projects/:id/*" element={<ProjectDetail />} />
+          <Route path="/info" element={<Info/>} />
+          <Route path="/kelolaprofil" element={<KelolaProfil/>} />
+          
+          {/* Rute Billing/Pricing agar bisa diakses dari klik dashboard */}
+          <Route path="/settings/billing" element={<Pricing />} /> 
+          
+          <Route 
+            path="/users" 
+            element={userRole === 'Superadmin' ? <Users /> : <Navigate to="/dashboard" />} 
+          />
+        </Route>
 
-        {/* Rute Lainnya */}
-        <Route path="/info" element={<Info/>} />
-        <Route path="/kelolaprofil" element={<KelolaProfil/>} />
+        {/* Rute Luar */}
         <Route path="/pricing" element={<Pricing/>} />
         <Route path="/checkout" element={<Checkout/>} />
         
-        {/* Proteksi Rute Superadmin */}
-        <Route 
-          path="/users" 
-          element={userRole === 'Superadmin' ? <Users /> : <Navigate to="/dashboard" />} 
-        />
-
-        {/* Fallback 404 */}
         <Route path="*" element={<div className="p-10 text-center">404 - Halaman Tidak Ditemukan</div>} />
       </Routes>
     </Router>
