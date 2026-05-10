@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../components/shared/Layout";
+// Layout dihapus dari import jika tidak digunakan lagi
 import Modal from "../components/ui/Modal";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import { Plus, MoreVertical, Trash2, Edit3 } from "lucide-react";
+import { Plus, Trash2, Edit3, Folder, MoreHorizontal, User, Clock, ChevronRight } from "lucide-react";
 import '../index.css';
 
 const ProjectList = () => {
@@ -90,141 +90,191 @@ const ProjectList = () => {
     setIsModalOpen(true);
   };
 
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 'done': return 'bg-emerald-100 text-emerald-600 border-emerald-200';
+      case 'on_progress': return 'bg-amber-100 text-amber-600 border-amber-200';
+      case 'hold': return 'bg-blue-100 text-blue-600 border-blue-200';
+      default: return 'bg-slate-100 text-slate-600 border-slate-200';
+    }
+  };
+
   return (
-    <Layout title="Proyek">
-      <div className="max-w-7xl mx-auto px-4 py-6">
+    <> {/* Layout diganti dengan fragment agar tidak merusak struktur DOM */}
+      <div className="max-w-[1600px] mx-auto p-8 pb-20 animate-in fade-in duration-700">
         
-        {/* WHITE CONTAINER CARD */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[500px]">
-          
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-800">Daftar Proyek</h2>
-            <p className="text-sm text-gray-400 mt-1">
-              Halaman ini berisi daftar proyek yang ada sesuai dengan hak akses dan kontribusi pengguna.
+        {/* HEADER SECTION */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black text-slate-800 tracking-tight">Manajemen Proyek</h1>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[3px]">
+              Pantau dan kelola seluruh inisiatif tim dalam satu dasbor.
             </p>
+          </div>
+          <button 
+            onClick={openCreate}
+            className="bg-[#ee1e2d] hover:bg-red-700 text-white px-8 py-4 rounded-[2rem] flex items-center justify-center gap-3 transition-all shadow-xl shadow-red-200 active:scale-95 text-xs font-black uppercase tracking-widest"
+          >
+            <Plus size={20} strokeWidth={3} />
+            Buat Proyek Baru
+          </button>
+        </div>
+
+        {/* MAIN CONTAINER */}
+        <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm p-10 min-h-[600px]">
+          
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100">
+                <Folder size={24} />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Daftar Aktif</h2>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Total {projects.length} Proyek Terdaftar</p>
+              </div>
+            </div>
           </div>
 
           {/* GRID SYSTEM */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            {/* CREATE PROJECT CARD */}
-            <div className="border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col items-center justify-center p-8 h-[220px]">
-              <span className="text-sm font-medium text-gray-600 mb-4">Buat Proyek Baru</span>
-              <button 
-                onClick={openCreate}
-                className="bg-[#e11d48] hover:bg-red-700 text-white px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md active:scale-95"
-              >
-                <Plus size={18} />
-                <span className="font-semibold text-sm">Tambah</span>
-              </button>
-            </div>
-
-            {/* PROJECT ITEMS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {projects.map((p) => (
               <div
                 key={p.id}
                 onClick={() => navigate(`/projects/${p.id}`)}
-                className="group relative bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden flex flex-col h-[220px]"
+                className="group bg-white border border-slate-100 rounded-[2.5rem] hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-500 cursor-pointer overflow-hidden flex flex-col h-[320px] relative"
               >
-                {/* Header Background */}
-                <div className="h-1/3 bg-[#fff1f2]"></div>
-
-                {/* Floating Icon */}
-                <div className="absolute top-[20%] left-6 p-2 bg-white rounded-lg shadow-sm border border-pink-50">
-                  <div className="bg-[#e11d48] p-1.5 rounded text-white">
-                    <Plus size={14} className="rotate-45" /> {/* Placeholder icon */}
-                  </div>
+                {/* Status Badge - Floating */}
+                <div className="absolute top-6 right-6 z-10">
+                  <span className={`text-[9px] px-3 py-1.5 rounded-xl font-black uppercase tracking-wider border shadow-sm ${getStatusStyle(p.status)}`}>
+                    {p.status.replace('_', ' ')}
+                  </span>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 pt-8 flex flex-col flex-grow">
-                  <h3 className="font-bold text-gray-800 uppercase tracking-tight text-sm mb-1">{p.name}</h3>
-                  <div className="flex items-center gap-2 text-[10px] text-gray-400 font-medium">
-                    <div className="w-4 h-4 bg-gray-200 rounded-full flex items-center justify-center text-[8px] text-gray-500 uppercase">
-                      {p.name.charAt(0)}
+                {/* Card Header (Visual) */}
+                <div className="h-32 bg-slate-50/50 flex items-center justify-center relative">
+                   <div className="w-16 h-16 bg-white rounded-[1.5rem] shadow-sm border border-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                      <div className="w-12 h-12 bg-[#ee1e2d] rounded-xl flex items-center justify-center text-white font-black text-xl">
+                        {p.name.charAt(0).toUpperCase()}
+                      </div>
+                   </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-8 pt-4 flex flex-col flex-grow items-center text-center">
+                  <h3 className="font-black text-slate-800 text-lg mb-1 group-hover:text-[#ee1e2d] transition-colors line-clamp-1 uppercase tracking-tight">
+                    {p.name}
+                  </h3>
+                  <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mb-6">
+                    {p.label || 'INTERNAL PROJECT'}
+                  </p>
+                  
+                  {/* Card Footer Info */}
+                  <div className="w-full mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[10px] text-slate-500 font-black uppercase tracking-tighter">
+                      <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border-2 border-white shadow-sm">
+                        <User size={12} />
+                      </div>
+                      Owner
                     </div>
-                    Clariva PO
+                    
+                    {/* Hover Actions */}
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
+                      <button 
+                        onClick={(e) => handleEdit(e, p)}
+                        className="p-2.5 bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                      >
+                        <Edit3 size={16} />
+                      </button>
+                      <button 
+                        onClick={(e) => handleDelete(e, p.id)}
+                        className="p-2.5 bg-slate-50 text-slate-400 hover:text-[#ee1e2d] hover:bg-red-50 rounded-xl transition-all"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-
-                {/* Action Hover Menu */}
-                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
-                    onClick={(e) => handleEdit(e, p)}
-                    className="p-1.5 bg-white shadow-sm border border-gray-100 rounded-md text-blue-500 hover:bg-blue-50"
-                  >
-                    <Edit3 size={14} />
-                  </button>
-                  <button 
-                    onClick={(e) => handleDelete(e, p.id)}
-                    className="p-1.5 bg-white shadow-sm border border-gray-100 rounded-md text-red-500 hover:bg-red-50"
-                  >
-                    <Trash2 size={14} />
-                  </button>
                 </div>
               </div>
             ))}
 
+            {/* EMPTY STATE */}
+            {projects.length === 0 && (
+              <div className="col-span-full py-24 flex flex-col items-center justify-center border-4 border-dashed border-slate-50 rounded-[3rem]">
+                 <div className="bg-slate-50 p-8 rounded-full mb-6">
+                    <Folder className="text-slate-200" size={64} />
+                 </div>
+                 <h3 className="text-slate-800 font-black uppercase tracking-widest text-sm mb-2">Tidak Ada Proyek</h3>
+                 <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[3px]">Silakan buat proyek baru untuk memulai.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* MODAL FORM TETAP SAMA */}
+      {/* MODAL FORM */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); resetForm(); }}
-        title={isEdit ? "Edit Project" : "Create Project"}
+        title={isEdit ? "PERBARUI DATA PROYEK" : "REGISTRASI PROYEK BARU"}
       >
-        <form onSubmit={handleSubmit} className="space-y-4 p-2">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-500">NAMA PROYEK</label>
+        <form onSubmit={handleSubmit} className="space-y-8 p-6">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-1">Nama Proyek</label>
             <input
-              placeholder="Project Name"
+              placeholder="Masukkan Nama Proyek..."
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500 outline-none transition"
+              className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl text-sm font-black focus:ring-4 focus:ring-red-500/5 focus:border-[#ee1e2d] outline-none transition-all placeholder:text-slate-300 uppercase tracking-tight"
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-500">TANGGAL MULAI</label>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-1">Mulai</label>
               <input
                 type="date"
                 value={formData.start_date}
                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl text-sm font-bold outline-none focus:border-[#ee1e2d] transition-all"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-500">TANGGAL BERAKHIR</label>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-1">Deadline</label>
               <input
                 type="date"
                 value={formData.end_date}
                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl text-sm font-bold outline-none focus:border-[#ee1e2d] transition-all"
               />
             </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-500">STATUS</label>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-            >
-              <option value="hold">Hold</option>
-              <option value="on_progress">On Progress</option>
-              <option value="done">Done</option>
-              <option value="archive">Archive</option>
-            </select>
+
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-1">Status Pengerjaan</label>
+            <div className="relative">
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl text-sm font-black uppercase tracking-widest appearance-none outline-none focus:border-[#ee1e2d] transition-all cursor-pointer"
+              >
+                <option value="hold">Hold (Ditunda)</option>
+                <option value="on_progress">On Progress (Berjalan)</option>
+                <option value="done">Done (Selesai)</option>
+                <option value="archive">Archive (Arsip)</option>
+              </select>
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <MoreHorizontal size={20} />
+              </div>
+            </div>
           </div>
-          <button className="w-full bg-[#e11d48] hover:bg-red-700 text-white p-3 rounded-lg font-bold text-sm shadow-md transition-all mt-4">
-            {isEdit ? "PERBARUI PROYEK" : "SIMPAN PROYEK"}
+
+          <button className="w-full bg-[#ee1e2d] hover:bg-red-700 text-white py-6 rounded-3xl font-black text-xs shadow-2xl shadow-red-200 transition-all active:scale-[0.98] mt-4 uppercase tracking-[4px]">
+            {isEdit ? "Simpan Perubahan" : "Finalisasi Proyek"}
           </button>
         </form>
       </Modal>
-    </Layout>
+    </>
   );
 };
 
