@@ -186,7 +186,7 @@ const SuperAdminView = ({ stats, recentProjects, navigate }) => {
           <div className="bg-[#ee1e2d] p-8 rounded-[3rem] text-white shadow-2xl shadow-red-200 relative overflow-hidden group min-h-[200px] flex flex-col justify-center">
             <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full group-hover:scale-110 transition-transform"></div>
             <div className="relative z-10">
-              <p className="text-[9px] font-black uppercase tracking-[2px] opacity-70 mb-2">Butuh Bantuan?</p>
+              <p className="text-[9px] font-black uppercase tracking-[2px] opacity-70 mb-2">Upgrade</p>
               <h3 className="text-xl font-black leading-tight mb-6">Panduan<br />Penggunaan</h3>
               <button className="flex items-center gap-2 px-5 py-3 bg-white text-[#ee1e2d] rounded-xl text-[9px] font-black uppercase tracking-widest hover:shadow-lg transition-all active:scale-95">
                 Dokumentasi <ChevronRight size={14} />

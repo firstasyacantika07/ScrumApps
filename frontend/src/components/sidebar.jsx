@@ -22,7 +22,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, userRole }) => {
       path: '/users', 
       icon: <Users size={20} />, 
       // Hanya muncul untuk admin atau superadmin sesuai data di database
-      show: isRole('admin') || isRole('superadmin') 
+      show: isRole('Superadmin') 
     },
     { name: 'Sistem', path: '/info', icon: <Info size={20} />, show: true },
   ];
